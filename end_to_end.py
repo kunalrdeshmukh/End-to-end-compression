@@ -24,7 +24,7 @@ IMAGE_DEPTH = 3
 #   return feature_columns
 # feature_columns = get_feature_columns()
 
-orig_image = utils.train_input_fn(utils.read_all_images1("./data/airplanes/*.jpg",180,180), BATCH_SIZE)
+orig_image = utils.train_input_fn(utils.read_all_images("./data/airplanes/*.jpg",180,180), BATCH_SIZE)
 
 conv_img =  end_to_end_net.comCNN(orig_image,True)
 
