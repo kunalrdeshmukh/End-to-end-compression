@@ -80,4 +80,4 @@ def recCNN(orig_img,img,no_of_layers,l2_regularizer):
     #residual learning
     final_img = tf.add(orig_img,residual_img)
 
-    return final_img
+    return (final_img,residual_img,upscaled_img)
