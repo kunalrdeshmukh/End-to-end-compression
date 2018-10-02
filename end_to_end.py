@@ -54,7 +54,7 @@ if TRAINING:
     saver = tf.train.Saver()
     saver.save(sess,'./model.ckpt')
 else :
-    img_path = "./data/random/ancient.jpg"
+    img_path = "./data/Faces_easy/image_0001.jpg"
     orig_image = utils.read_image(img_path,IMAGE_HEIGHT,IMAGE_WIDTH)
     orig_image = tf.expand_dims(orig_image, 0)
     conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
