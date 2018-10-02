@@ -2,38 +2,30 @@ import numpy as np
 import tensorflow as tf
 from time import time
 import sys
+import time
 
 import end_to_end_net
 import utils
 
-L2_REGULARIZER = False
+L2_REGULARIZER = True
 NUM_LAYERS_IN_recCNN = 20
-NUM_EPOCH = 50
+NUM_EPOCH = 1
 BATCH_SIZE = 128
 IMAGE_HEIGHT = 180
 IMAGE_WIDTH = 180
 IMAGE_DEPTH = 3
+TRAINING = False
 
-# print end_to_end_net.recCNN(utils.read_all_images("./data/airplanes/*.jpg",180,180),end_to_end_net.comCNN(utils.read_all_images("./data/airplanes/*.jpg",180,180),False),20,False)
 
+orig_image = utils.train_input_fn(utils.read_all_images("./data/airplanes/*.jpg",IMAGE_HEIGHT,IMAGE_WIDTH), BATCH_SIZE)
 
-# def get_feature_columns():
-#   feature_columns = {
-#     'images': tf.feature_column.numeric_column('images', (IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_DEPTH)),
-#   }
-#   return feature_columns
-# feature_columns = get_feature_columns()
+conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
 
-orig_image = utils.train_input_fn(utils.read_all_images("./data/airplanes/*.jpg",180,180), BATCH_SIZE)
-
-conv_img =  end_to_end_net.comCNN(orig_image,True)
-
-(final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,20,True)
-
+(final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,7,L2_REGULARIZER)
 global_step = tf.Variable(0, trainable=False)
 starter_learning_rate = 0.01
 learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step,
-                                        50, 0.96, staircase=True)
+                                        1, 0.96, staircase=True)
 loss_1 = tf.losses.mean_squared_error(orig_image,final_img)
 
 loss_2 = tf.losses.mean_squared_error(residual_img , (upscaled_img - orig_image))
@@ -41,10 +33,40 @@ loss_2 = tf.losses.mean_squared_error(residual_img , (upscaled_img - orig_image)
 optimizer1 = (tf.train.AdamOptimizer(learning_rate).minimize(loss_1, global_step=global_step))
 optimizer2 = (tf.train.AdamOptimizer(learning_rate).minimize(loss_2, global_step=global_step))
 
-init = tf.global_variables_initializer()
 sess = tf.Session()
-sess.run(init) # reset values to wrong
-for i in range(1000):
-    sess.run(optimizer1)
-    sess.run(optimizer2)
-        
+saver = tf.train.Saver()
+init = tf.global_variables_initializer()
+
+if TRAINING: 
+    sess.run(init)
+    f = open("log.txt","w")
+    for i in range(200):
+        start_time = time.time()
+        print "iteration: "+str(i)
+        sess.run(optimizer1)
+        loss1 = sess.run(loss_1)
+        print "loss 1 :"+str(loss1)
+        sess.run(optimizer2)
+        loss2 = sess.run(loss_2)
+        print "loss 2 :"+str(loss2)
+        f.write("Iteration :"+str(i)+" loss1 : "+str(loss1)+" loss2 :"+str(loss2)+"\n"+"time : "+str(time.time() - start_time)+"\n" )
+    saver = tf.train.Saver()
+    saver.save(sess,'./model.ckpt')
+else :
+    # orig_image = utils.train_input_fn(utils.read_image("./data/airplanes/image_0001.jpg",IMAGE_HEIGHT,IMAGE_WIDTH), BATCH_SIZE)
+    orig_image = utils.read_image("./data/random/ancient.jpg",IMAGE_HEIGHT,IMAGE_WIDTH)
+    orig_image = tf.expand_dims(orig_image, 0)
+    print orig_image
+    conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
+    (final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,7,L2_REGULARIZER)
+    saver.restore(sess, "./model.ckpt")  
+    print("Model restored.")
+    init = tf.global_variables_initializer()
+    sess.run(init)
+    conv_img = sess.run(tf.squeeze(conv_img))
+    utils.write_jpeg(conv_img,"./mid_im.jpg")
+    final_im = sess.run(tf.squeeze(final_img))
+    # print type(final_im)
+    # print final_im
+    utils.write_jpeg(final_im,"./final_im.jpg")
+    # HEIC 

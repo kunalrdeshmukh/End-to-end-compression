@@ -5,21 +5,38 @@ def read_all_images(path,x,y):
     files = glob.glob (path)
     data = []
     for myFile in files:
-        # print myFile
-        image = tf.image.decode_jpeg(myFile,channels=3)
+        #print myFile
+        value = tf.read_file(myFile)
+        image = tf.image.decode_jpeg(value,channels=3)
         resized_image = tf.image.resize_images(image, [x, y])
         data.append(resized_image)
     return tf.stack(data)
 
+def read_image(path,x,y):
+    files = glob.glob (path)
+    value = tf.read_file(files[0])
+    image = tf.image.decode_jpeg(value,channels=3)
+    resized_image = tf.image.resize_images(image, [x, y])
+    return resized_image
 
-# def read_all_images1(path,x,y):
-#     filename_queue = tf.train.string_input_producer(
-#             tf.train.match_filenames_once(path))
-#     image_reader = tf.WholeFileReader()
-#     _, image_file = image_reader.read(filename_queue)
-#     image = tf.image.decode_jpeg(image_file)
-#     resized_image = tf.image.resize_images(image, [x, y])
-#     return resized_image
+
+def write_jpeg(data, filepath):
+    g = tf.Graph()
+    with g.as_default():
+        data_t = tf.placeholder(tf.uint8)
+        op = tf.image.encode_jpeg(data_t, format='rgb', quality=100)
+        init = tf.initialize_all_variables()
+
+    with tf.Session(graph=g) as sess:
+        sess.run(init)
+        data_np = sess.run(op, feed_dict={ data_t: data })
+
+    with open(filepath, 'w') as fd:
+        fd.write(data_np)
+        
+def write_img(data,filepath):
+    img = tf.image.encode_jpeg(data)
+    tf.write_file(filepath,img)
 
 def train_input_fn(features, batch_size):
     """ Input function for training """

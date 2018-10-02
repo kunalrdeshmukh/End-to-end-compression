@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def comCNN(orig_img,l2_regularizer):
+def comCNN(orig_img,l2_regularizer=True):
 
     # add regularization 
     if l2_regularizer:
@@ -38,7 +38,7 @@ def comCNN(orig_img,l2_regularizer):
     return conv3
 
 
-def recCNN(orig_img,img,no_of_layers,l2_regularizer):
+def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
 
     # add regularization 
     if l2_regularizer:
