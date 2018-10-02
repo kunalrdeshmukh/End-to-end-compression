@@ -3,6 +3,7 @@ import tensorflow as tf
 from time import time
 import sys
 import time
+from PIL import Image
 
 import end_to_end_net
 import utils
@@ -35,9 +36,9 @@ optimizer2 = (tf.train.AdamOptimizer(learning_rate).minimize(loss_2, global_step
 
 sess = tf.Session()
 saver = tf.train.Saver()
-init = tf.global_variables_initializer()
 
 if TRAINING: 
+    init = tf.global_variables_initializer()
     sess.run(init)
     f = open("log.txt","w")
     for i in range(200):
@@ -53,16 +54,16 @@ if TRAINING:
     saver = tf.train.Saver()
     saver.save(sess,'./model.ckpt')
 else :
-    # orig_image = utils.train_input_fn(utils.read_image("./data/airplanes/image_0001.jpg",IMAGE_HEIGHT,IMAGE_WIDTH), BATCH_SIZE)
-    orig_image = utils.read_image("./data/random/ancient.jpg",IMAGE_HEIGHT,IMAGE_WIDTH)
+    img_path = "./data/random/ancient.jpg"
+    orig_image = utils.read_image(img_path,IMAGE_HEIGHT,IMAGE_WIDTH)
     orig_image = tf.expand_dims(orig_image, 0)
-    print orig_image
     conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
     (final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,7,L2_REGULARIZER)
     saver.restore(sess, "./model.ckpt")  
     print("Model restored.")
     init = tf.global_variables_initializer()
     sess.run(init)
+    utils.resize_img(img_path,IMAGE_HEIGHT,IMAGE_WIDTH)
     conv_img = sess.run(tf.squeeze(conv_img))
     utils.write_jpeg(conv_img,"./mid_im.jpg")
     final_im = sess.run(tf.squeeze(final_img))

@@ -19,8 +19,17 @@ def read_image(path,x,y):
     resized_image = tf.image.resize_images(image, [x, y])
     return resized_image
 
+def resize_img(path,x,y):
+    files = glob.glob (path)
+    value = tf.read_file(files[0])
+    image = tf.image.decode_jpeg(value,channels=3)
+    resized_image = tf.image.resize_images(image, [x, y])
+    sess = tf.Session()
+    write_jpeg(sess.run(resized_image),"./resized_img.jpg")
 
-def write_jpeg(data, filepath):
+def write_jpeg(data, filepath):      
+   # adopted from  https://stackoverflow.com/questions/40320271/how-do-we-use-tf-image-encode-jpeg-to-write-out-an-image-in-tensorflow
+
     g = tf.Graph()
     with g.as_default():
         data_t = tf.placeholder(tf.uint8)
