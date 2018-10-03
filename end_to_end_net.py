@@ -47,7 +47,7 @@ def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
         regularizer = None 
 
     #bicubic interpolation
-    upscaled_img =  tf.image.resize_bicubic(img, [180,180])
+    upscaled_img =  tf.image.resize_bicubic(img, [320,320])
 
     #layer 1
     conv1 = tf.layers.conv2d(

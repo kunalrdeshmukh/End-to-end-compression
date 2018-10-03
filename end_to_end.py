@@ -10,19 +10,19 @@ import utils
 
 L2_REGULARIZER = True
 NUM_LAYERS_IN_recCNN = 20
-NUM_EPOCH = 1
+NUM_EPOCH = 200
 BATCH_SIZE = 128
-IMAGE_HEIGHT = 180
-IMAGE_WIDTH = 180
+IMAGE_HEIGHT = 320
+IMAGE_WIDTH = 320
 IMAGE_DEPTH = 3
-TRAINING = False
+TRAINING = True
 
 
 orig_image = utils.train_input_fn(utils.read_all_images("./data/airplanes/*.jpg",IMAGE_HEIGHT,IMAGE_WIDTH), BATCH_SIZE)
 
 conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
 
-(final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,7,L2_REGULARIZER)
+(final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(orig_image,conv_img,NUM_LAYERS_IN_recCNN,L2_REGULARIZER)
 global_step = tf.Variable(0, trainable=False)
 starter_learning_rate = 0.01
 learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step,
@@ -41,7 +41,7 @@ if TRAINING:
     init = tf.global_variables_initializer()
     sess.run(init)
     f = open("log.txt","w")
-    for i in range(200):
+    for i in range(NUM_EPOCH):
         start_time = time.time()
         print "iteration: "+str(i)
         sess.run(optimizer1)
@@ -54,7 +54,7 @@ if TRAINING:
     saver = tf.train.Saver()
     saver.save(sess,'./model.ckpt')
 else :
-    img_path = "./data/Faces_easy/image_0001.jpg"
+    img_path = "./data/airplanes/image_0001.jpg"
     orig_image = utils.read_image(img_path,IMAGE_HEIGHT,IMAGE_WIDTH)
     orig_image = tf.expand_dims(orig_image, 0)
     conv_img =  end_to_end_net.comCNN(orig_image,L2_REGULARIZER)
