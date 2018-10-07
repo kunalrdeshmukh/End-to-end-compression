@@ -15,7 +15,9 @@ Description of python files :
 <br />
 end_to_end_net.py : This file contains the tensorflow code for ComCNN and RecCNN as described in the reference paper[1]. This code uses tensorflow layers API. <br />
 utils.py : This file contains the python code for utilities used in main code to read / write / process image. <br />
-end_to_end.py : This file contains tensorflow graph as described in the paper[1]. It contains the definition of hyperparameters, loss functions and optimizer used.
+end_to_end.py : This file contains tensorflow graph as described in the paper[1]. It contains the definition of hyperparameters, loss functions and optimizer used. Run this file as :
+```python end_to_end.py``` 
+to run this code. 
 
 Below are the results obtained after training the network on Caltech 101[2] aeroplane dataset. I had used 200 epochs with the batch size of 128. 
 
@@ -30,7 +32,15 @@ Inference results are as below :
 | ![Original image of an aeroplane](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/airplane_001/resized_img.jpg) Size : 29KB| ![Compact representation of aeroplane](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/airplane_001/mid_im.jpg) Size : 16KB| ![Reconstructed image of an aeroplane](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/airplane_001/final_im.jpg) Size:29KB|
 | ![Original image of an stonehenge](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/Random/resized_img.jpg) Size: 37KB| ![compact image of an stonehenge](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/Random/mid_im.jpg) Size: 17KB |![Reconstructed image of an stonehenge](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/Random/final_im.jpg) Size: 37KB|
 
-<br /><br /><br />
+<br />
+
+All input images are of size 180 x 180. The compact representation of an image is in jpg format and it can be transferred through a channel which supports JPEG format. 
+
+![End to end framework diagram ](https://github.com/kunalrdeshmukh/End-to-end-compression/blob/master/results/End_to_end_framework_diagram.png)
+
+
+
+<br /><br />
 
 References : 
 
