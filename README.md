@@ -1,6 +1,9 @@
 # End-to-end-compression
 
-A code to implement end to end image compression framework proposed in the paper below :
-https://arxiv.org/abs/1708.00838 
+This is my implementation of end to end image compression framework[1] .
 
-This code uses tf.layers API.
+References : 
+
+[1] Jiang Feng, Et al. (August 2017). An End-to-End Compression Framework Based on Convolutional Neural Networks. IEEE Transactions on Circuits and Systems for Video Technology.. Harbin, China. arxiv e-archive.
+
+[2] Caltech 101 dataset : http://www.vision.caltech.edu/Image_Datasets/Caltech101/
