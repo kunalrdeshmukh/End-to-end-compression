@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def comCNN(orig_img,l2_regularizer=True):
+def comCNN(orig_img,is_training=False, l2_regularizer=True):
 
     # add regularization 
     if l2_regularizer:
@@ -25,7 +25,7 @@ def comCNN(orig_img,l2_regularizer=True):
       padding='SAME',
       kernel_regularizer=regularizer)
     
-    conv2 = tf.layers.batch_normalization(conv2)
+    conv2 = tf.layers.batch_normalization(conv2,training=is_training)
     conv2 = tf.nn.relu(conv2)
 
     #layer 3 :
@@ -38,7 +38,7 @@ def comCNN(orig_img,l2_regularizer=True):
     return conv3
 
 
-def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
+def recCNN(orig_img,img,no_of_layers,is_training=False,l2_regularizer=True):
 
     # add regularization 
     if l2_regularizer:
@@ -47,7 +47,7 @@ def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
         regularizer = None 
 
     #bicubic interpolation
-    upscaled_img =  tf.image.resize_bicubic(img, [320,320])
+    upscaled_img =  tf.image.resize_bicubic(img, [200,200])
 
     #layer 1
     conv1 = tf.layers.conv2d(
@@ -66,7 +66,7 @@ def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
             kernel_size=[3, 3],
             padding='SAME',
             kernel_regularizer=regularizer)
-        conv2 = tf.layers.batch_normalization(conv2)
+        conv2 = tf.layers.batch_normalization(conv2,training=is_training)
         conv2 = tf.nn.relu(conv2)
 
     #layer 20
@@ -78,6 +78,6 @@ def recCNN(orig_img,img,no_of_layers,l2_regularizer=True):
         kernel_regularizer=regularizer)
     
     #residual learning
-    final_img = tf.add(orig_img,residual_img)
+    final_img = tf.add(upscaled_img,residual_img)
 
     return (final_img,residual_img,upscaled_img)
