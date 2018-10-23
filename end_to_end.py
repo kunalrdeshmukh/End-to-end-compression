@@ -21,7 +21,7 @@ TRAINING = True
 
 def training():
     input_img = utils.train_input_fn(utils.read_all_images("./data/airplanes/*.jpg",IMAGE_HEIGHT,IMAGE_WIDTH), BATCH_SIZE)
-    input_img = tf.expand_dims(input_img,1)
+    print input_img
     conv_img =  end_to_end_net.comCNN(input_img,True,L2_REGULARIZER,reuse=False)
     (final_img,residual_img,upscaled_img)  = end_to_end_net.recCNN(input_img,conv_img,NUM_LAYERS_IN_recCNN,
             True,L2_REGULARIZER,reuse=False)
