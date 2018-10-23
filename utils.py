@@ -10,6 +10,7 @@ def read_all_images(path,x,y):
         image = tf.image.decode_jpeg(value,channels=3)
         resized_image = tf.image.resize_images(image, [x, y])
         data.append(resized_image)
+        # data.append(tf.image.rgb_to_grayscale(resized_image))
     return tf.stack(data)
 
 def read_image(path,x,y):
@@ -17,15 +18,18 @@ def read_image(path,x,y):
     value = tf.read_file(files[0])
     image = tf.image.decode_jpeg(value,channels=3)
     resized_image = tf.image.resize_images(image, [x, y])
+    # return tf.image.rgb_to_grayscale(resized_image)
     return resized_image
 
 def resize_img(path,x,y):
     files = glob.glob (path)
     value = tf.read_file(files[0])
     image = tf.image.decode_jpeg(value,channels=3)
+    # image = tf.image.decode_jpeg(value,channels=1)
     resized_image = tf.image.resize_images(image, [x, y])
     sess = tf.Session()
-    write_jpeg(sess.run(resized_image),"./resized_img.jpg")
+    write_jpeg(sess.run(resized_image),"/content/drive/My Drive/Fall 18/297/Deliverable_1/End_to_End_implementation/resized_img.jpg")
+    # write_jpeg(sess.run(tf.image.rgb_to_grayscale(resized_image)),"/content/drive/My Drive/Fall 18/297/Deliverable_1/End_to_End_implementation/resized_img.jpg")
 
 def write_jpeg(data, filepath):      
    # adopted from  https://stackoverflow.com/questions/40320271/how-do-we-use-tf-image-encode-jpeg-to-write-out-an-image-in-tensorflow
@@ -34,6 +38,7 @@ def write_jpeg(data, filepath):
     with g.as_default():
         data_t = tf.placeholder(tf.uint8)
         op = tf.image.encode_jpeg(data_t, format='rgb', quality=100)
+        # op = tf.image.encode_jpeg(data_t, format='grayscale', quality=100)
         init = tf.initialize_all_variables()
 
     with tf.Session(graph=g) as sess:
