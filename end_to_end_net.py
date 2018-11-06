@@ -1,7 +1,6 @@
 import tensorflow as tf
 
 def comCNN(orig_img,is_training=False, l2_regularizer=True,reuse=False):
-
     # add regularization 
     if l2_regularizer:
         regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)
@@ -17,6 +16,8 @@ def comCNN(orig_img,is_training=False, l2_regularizer=True,reuse=False):
         padding='SAME',
         kernel_regularizer=regularizer,
         name='com/conv1')
+        
+        # conv1 = tf.Print(conv1,[conv1],"After first convolution: ",summarize=20)
 
         # layer 2 : 
         conv2 = tf.layers.conv2d(
@@ -32,19 +33,22 @@ def comCNN(orig_img,is_training=False, l2_regularizer=True,reuse=False):
         name='com/bn2')
         conv2 = tf.nn.relu(conv2, name='com/a2')
 
+        # conv2 = tf.Print(conv2,[conv2],"After second convolution: ",summarize=20)
+
         #layer 3 :
         conv3 = tf.layers.conv2d(
         inputs=conv2,
-        filters=3,
+        filters=1,
         kernel_size=[3, 3],
         kernel_regularizer=regularizer,
         name='com/conv3')
+
+        # conv3 = tf.Print(conv3,[conv3],"After third convolution: ",summarize=20)       
 
         return conv3
 
 
 def recCNN(orig_img,img,no_of_layers,is_training=False,l2_regularizer=True,reuse=False):
-
     # add regularization 
     if l2_regularizer:
         regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)
@@ -82,7 +86,7 @@ def recCNN(orig_img,img,no_of_layers,is_training=False,l2_regularizer=True,reuse
         #layer 20
         residual_img = tf.layers.conv2d(
             inputs=conv2,
-            filters=3,
+            filters=1,
             kernel_size=[3, 3],
             padding='SAME',
             kernel_regularizer=regularizer,
