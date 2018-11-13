@@ -2,11 +2,6 @@
 
 This is my implementation of end to end image compression framework[1] .
 
-Neural net is defined at end_to_end_network.py
-
-to start training, run `end_to_end.py train`
-
-
 
 
 References : 
